@@ -33,7 +33,8 @@ services:
     networks:
       mintec-networks: 
         ipv4_address: 172.10.0.10
-  api-delegada:
+  c3-app:
+      container_name: "c3-app"
       build:
         context: ./php-composer
         dockerfile: Dockerfile

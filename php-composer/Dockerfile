@@ -1,49 +1,30 @@
-# Usa la imagen base de Ubuntu
-FROM ubuntu:22.04
+# Usa la imagen base de PHP con FPM
+FROM php:8.2-fpm
 
-# Establece la zona horaria (ajusta a tu zona horaria)
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=America/Lima
-
-# Instala las dependencias necesarias
+# Instala las dependencias del sistema
 RUN apt-get update && apt-get install -y \
-    software-properties-common \
     git \
-    zsh \
     curl \
+    zsh \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
     zip \
     unzip \
-    libzip-dev \
-    && apt-get clean
-
-# Configura la zona horaria
-RUN apt-get install -y tzdata
-
-# Agrega el repositorio de Ondřej Surý para PHP
-RUN add-apt-repository ppa:ondrej/php -y && \
-    apt-get update && \
-    apt-get install -y \
-    php8.2 \
-    php8.2-cli \
-    php8.2-fpm \
-    php8.2-mbstring \
-    php8.2-xml \
-    php8.2-mysql \
-    php8.2-curl \
-    php8.2-zip \
-    php8.2-gd && \
-    apt-get clean
+    libzip-dev
 
 # Instala Node.js (versión LTS)
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
-    apt-get install -y nodejs && \
-    apt-get clean
+    apt-get install -y nodejs
+
+# Limpia la caché
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Instala extensiones de PHP
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Obtiene la última versión de Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Instala Oh My Zsh
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -53,6 +34,3 @@ RUN chsh -s $(which zsh)
 
 # Establece el directorio de trabajo
 WORKDIR /home/antonio/proyectos-trabajo/c3app/
-
-# Comando por defecto
-CMD ["zsh"]

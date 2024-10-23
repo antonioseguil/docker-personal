@@ -15,7 +15,26 @@ services:
     networks:
       mintec-networks:
         ipv4_address: 172.10.0.25
-
+  adminer:
+      container_name: "adminer"
+      image: adminer
+      ports:
+      - "3306"
+      restart: always
+      networks:
+        mintec-networks:
+          ipv4_address: 172.10.0.24
+  nginx-main:
+    container_name: "nginx-main"
+    build:
+      context: ./nginx-router-balance
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    restart: always
+    networks:
+      mintec-networks: 
+        ipv4_address: 172.10.0.10
 networks:
   mintec-networks:
     driver: bridge

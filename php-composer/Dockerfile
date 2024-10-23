@@ -1,8 +1,10 @@
-FROM php:8.2-fpm
+# Usa la imagen base de Alpine
+FROM ubuntu:22.04
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
+    zsh \
     curl \
     libpng-dev \
     libonig-dev \
@@ -24,4 +26,13 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Instala Oh My Zsh
+RUN curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh
+
+# Cambia el shell por defecto a zsh
+RUN chsh -s $(which zsh)
+
 WORKDIR /home/antonio/proyectos-trabajo/c3app/
+
+# Comando por defecto
+CMD ["zsh"]

@@ -33,6 +33,19 @@ services:
     networks:
       mintec-networks: 
         ipv4_address: 172.10.0.10
+  api-delegada:
+      build:
+        context: ./php-composer
+        dockerfile: Dockerfile
+      ports:
+        - "8080:8080"
+        - "5173:5173"
+      restart: unless-stopped
+      volumes:
+        - /home/antonio/proyectos-trabajo/c3app/:/home/antonio/proyectos-trabajo/c3app/
+      networks:
+        mintec-networks:
+          ipv4_address: 172.10.0.50
 networks:
   mintec-networks:
     driver: bridge
